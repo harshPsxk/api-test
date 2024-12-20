@@ -3,9 +3,11 @@ import axios from 'axios';
 import './App.css'; // Import the CSS file
 
 const App = () => {
-    const [apiKey, setApiKey] = useState('');
+    const [apiKey, setApiKey] = useState('asdkjhaskdh');
     const [teams, setTeams] = useState([]);
-    const [error, setError] = useState('');
+    const [selectedTeam, setSelectedTeam] = useState(null);
+    console.log('??? changes in apiKey', apiKey);
+    console.log('??? changes in selectedTeam', selectedTeam);
 
     const fetchTeams = async () => {
         try {
@@ -15,10 +17,9 @@ const App = () => {
                     'Content-Type': 'application/json',
                 },
             });
-            setTeams(response.data);
-            setError('');
+            setTeams([...response.data]);
         } catch (err) {
-            setError('Invalid API key or network error.');
+            console.log(err)
         }
     };
 
@@ -32,18 +33,17 @@ const App = () => {
                 onChange={(e) => setApiKey(e.target.value)}
             />
             <button onClick={fetchTeams}>Fetch Teams</button>
-            {error && <p>{error}</p>}
-            {teams.length > 0 && (
-                <select>
-                    {teams.map((team) => (
-                        <option key={team.id} value={team.id}>
-                            {team.name}
-                        </option>
-                    ))}
-                </select>
-            )}
+            <select value={selectedTeam} onChange={(e) => setSelectedTeam(e.target.value)}>
+                <option id={null} value={null}>Select team</option>
+                {teams.map((team) => (
+                    <option key={team.id} value={team.id}>{team.name}</option>
+                ))}
+            </select>
+            <button>Fetch databases</button>
         </div>
     );
 };
 
 export default App;
+
+
