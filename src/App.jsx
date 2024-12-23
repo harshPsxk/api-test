@@ -6,6 +6,9 @@ const App = () => {
     const [apiKey, setApiKey] = useState('asdkjhaskdh');
     const [teams, setTeams] = useState([]);
     const [selectedTeam, setSelectedTeam] = useState(null);
+
+    const [database, setDatabases] = useState([]);
+
     console.log('??? changes in apiKey', apiKey);
     console.log('??? changes in selectedTeam', selectedTeam);
 
@@ -18,10 +21,35 @@ const App = () => {
                 },
             });
             setTeams([...response.data]);
+            return (response.data);
         } catch (err) {
             console.log(err)
         }
     };
+
+    const fetchDatabases = async () => {
+        try {
+            const teams = await fetchTeams();
+            if (teams && teams.length > 0) {
+                const teamId = teams[0].id;
+                console.log('------------->', teamId);
+                const response = await axios.get('https://api.ninox.com/v1/teams/teamId/databases', {
+                    headers: {
+                        Authorization: `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+                setDatabases([...response.data]);
+                console.log('-=-=--=-===--=',setDatabases);
+            } else {
+                console.log('no team found');
+            }
+
+        } catch (err) {
+            console.log(err);
+
+        }
+    }
 
     return (
         <div className="container">
@@ -39,7 +67,7 @@ const App = () => {
                     <option key={team.id} value={team.id}>{team.name}</option>
                 ))}
             </select>
-            <button>Fetch databases</button>
+            <button onClick={fetchDatabases}>Fetch databases</button>
         </div>
     );
 };
